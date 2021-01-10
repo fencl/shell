@@ -1,0 +1,5 @@
+shell
+*.o
+test.txt
+test
+cstyle.pl
