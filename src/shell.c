@@ -32,7 +32,6 @@ void signal_handler(int sig) {
 	switch (sig) {
 		case SIGINT:
 			printf("\n");
-			set_return_value(128 + sig);
 			siglongjmp(sigint_jump, 1);
 			break;
 		default:
@@ -51,6 +50,8 @@ static void wait_for_pid(pid_t pid, bool last, bool *sigint_pipe) {
 		} else {
 			kill(pid, SIGINT);
 			*sigint_pipe = true;
+			if (last)
+				set_return_value(128 + 2);
 		}
 	}
 }
