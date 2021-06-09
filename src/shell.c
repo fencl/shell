@@ -45,8 +45,12 @@ static void wait_for_pid(pid_t pid, bool last, bool *sigint_pipe) {
 		int stat;
 		if (!*sigint_pipe && sigsetjmp(sigint_jump, 1) == 0) {
 			while (waitpid(pid, &stat, 0) > 0) { }
-			if (last)
-				set_return_value(WEXITSTATUS(stat));
+			if (last) {
+				if (WIFEXITED(stat))
+					set_return_value(WEXITSTATUS(stat));
+				else
+					set_return_value(128 + WTERMSIG(stat));
+			}
 		} else {
 			kill(pid, SIGINT);
 			*sigint_pipe = true;
